@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17709" systemVersion="20C69" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="CustomAttributeSet" syncable="YES">
+        <attribute name="x1" attributeType="Binary"/>
+        <attribute name="x2" attributeType="String"/>
+        <attribute name="x3" optional="YES" attributeType="String"/>
+        <attribute name="x4" optional="YES" attributeType="String"/>
+        <attribute name="x5" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="x6" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+    </entity>
+    <entity name="DemoAttributeSetRef" syncable="YES">
+        <attribute name="x1" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="x2" optional="YES" attributeType="Integer 64" usesScalarValueType="YES"/>
+    </entity>
+    <entity name="PrimitiveAttributeFullSet" syncable="YES">
+        <attribute name="x1" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="x2" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="x3" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="x4" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="x5" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="x6" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="x7" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="x8" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="x9" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="x10" optional="YES" attributeType="String"/>
+        <attribute name="x11" optional="YES" attributeType="Binary"/>
+        <attribute name="x12" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="x13" optional="YES" attributeType="URI"/>
+    </entity>
+    <elements>
+        <element name="PrimitiveAttributeFullSet" positionX="-63" positionY="-18" width="128" height="224"/>
+        <element name="CustomAttributeSet" positionX="-63" positionY="81" width="128" height="119"/>
+        <element name="DemoAttributeSetRef" positionX="-54" positionY="90" width="128" height="59"/>
+    </elements>
+</model>

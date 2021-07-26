@@ -193,71 +193,47 @@ final class ReadWriteTests: XCTestCase {
 
     func testMultiThreadReadWrite() {
         TestDB.temporaryContainer(store: DataModels.bookLibrary) { pc in
-            let group = DispatchGroup()
-
-            let range = 1 ... 100
-
-            range.forEach { number in
-                group.enter()
-
-                DispatchQueue.global().asyncAfter(deadline: .now() + .random(in: 0.1 ... 0.2)) {
-                    do {
-                        try pc.perform { ctx in
-                            try ctx.insert(BookLibrary.Book(year: number))
-                        }
-                    } catch {
-                        XCTFail(error.localizedDescription)
+            DispatchQueue.concurrentPerform(iterations: 100) { number in
+                do {
+                    try pc.perform { ctx in
+                        try ctx.insert(BookLibrary.Book(year: number))
                     }
-
-                    group.leave()
+                } catch {
+                    XCTFail(error.localizedDescription)
                 }
             }
-
-            group.wait()
 
             let bookNames = try pc.perform { ctx in
                 try ctx.fetch(BookLibrary.Book.all.sort(\.year), \.year)
             }
 
-            XCTAssert(bookNames == Array(range))
+            XCTAssert(bookNames == Array(0 ..< 100))
         }
     }
 
     func testMultiThreadReadWriteRelationsStability() {
         TestDB.temporaryContainer(store: DataModels.bookLibrary, overwriteMergePolicy: true) { pc in
-            let group = DispatchGroup()
-
-            let range = 1 ... 100
-
             try pc.perform { ctx in
                 try ctx.insert(BookLibrary.Author(id: .init(), name: "Leo", age: 100))
             }
 
-            range.forEach { _ in
-                group.enter()
-
-                DispatchQueue.global().asyncAfter(deadline: .now() + .random(in: 0.1 ... 0.2)) {
-                    do {
-                        try pc.perform { ctx in
-                            if let author = try ctx.fetchOne(BookLibrary.Author.all) {
-                                if Bool.random() {
-                                    try author.books.add(ctx.insert(BookLibrary.Book()))
-                                } else {
-                                    author.books.forEach {
-                                        author.books.delete($0, context: ctx)
-                                    }
+            DispatchQueue.concurrentPerform(iterations: 100) { _ in
+                do {
+                    try pc.perform { ctx in
+                        if let author = try ctx.fetchOne(BookLibrary.Author.all) {
+                            if Bool.random() {
+                                try author.books.add(ctx.insert(BookLibrary.Book()))
+                            } else {
+                                author.books.forEach {
+                                    author.books.delete($0, context: ctx)
                                 }
                             }
                         }
-                    } catch {
-                        XCTFail(error.localizedDescription)
                     }
-
-                    group.leave()
+                } catch {
+                    XCTFail(error.localizedDescription)
                 }
             }
-
-            group.wait()
         }
     }
 }

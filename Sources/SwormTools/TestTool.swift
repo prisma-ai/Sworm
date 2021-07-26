@@ -2,6 +2,8 @@ import CoreData
 
 public enum TestTool {
     public enum Migrations {
+        // MARK: Public
+
         public enum Error: Swift.Error {
             case invalidMigrationStepCount(Int?, expected: Int?, store: SQLiteStoreDescription)
         }
@@ -29,6 +31,8 @@ public enum TestTool {
                 }
             }
         }
+
+        // MARK: Private
 
         private static func performTestAction(
             store: SQLiteStoreDescription,

@@ -1,11 +1,13 @@
 import CoreData
 
 public final class ManagedObjectContext {
-    unowned let instance: NSManagedObjectContext
+    // MARK: Lifecycle
 
     internal init(_ instance: NSManagedObjectContext) {
         self.instance = instance
     }
+
+    // MARK: Public
 
     @discardableResult
     public func insert<PlainObject: ManagedObjectConvertible>(_ value: PlainObject) throws -> ManagedObject<PlainObject> {
@@ -105,6 +107,10 @@ public final class ManagedObjectContext {
             try Attribute?.decode($0[attribute.name])
         }
     }
+
+    // MARK: Internal
+
+    unowned let instance: NSManagedObjectContext
 }
 
 public extension ManagedObjectContext {

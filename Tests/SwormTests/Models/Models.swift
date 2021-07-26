@@ -8,20 +8,20 @@ enum MigratableModels {
     }
 
     struct B: Comparable {
+        var identifier: Double = 0
+        var text: String = ""
+
         static func < (lhs: MigratableModels.B, rhs: MigratableModels.B) -> Bool {
             lhs.identifier < rhs.identifier
         }
-
-        var identifier: Double = 0
-        var text: String = ""
     }
 
     struct C: Comparable {
+        var foo: String = ""
+
         static func < (lhs: MigratableModels.C, rhs: MigratableModels.C) -> Bool {
             lhs.foo < rhs.foo
         }
-
-        var foo: String = ""
     }
 }
 
@@ -46,8 +46,7 @@ struct PrimitiveAttributeFullSet: Equatable {
 
 struct CustomAttributeSet: Equatable {
     struct CustomType: Equatable, Codable, LosslessStringConvertible {
-        let x: Int
-        let y: Int
+        // MARK: Lifecycle
 
         internal init(x: Int, y: Int) {
             self.x = x
@@ -67,6 +66,11 @@ struct CustomAttributeSet: Equatable {
             self.x = x
             self.y = y
         }
+
+        // MARK: Internal
+
+        let x: Int
+        let y: Int
 
         var description: String {
             "\(self.x)-\(self.y)"
@@ -88,12 +92,12 @@ struct CustomAttributeSet: Equatable {
 }
 
 final class DemoAttributeSetRef: Equatable {
+    var x1: Int = .zero
+    var x2: Int?
+
     static func == (lhs: DemoAttributeSetRef, rhs: DemoAttributeSetRef) -> Bool {
         lhs.x1 == rhs.x1 && lhs.x2 == rhs.x2
     }
-
-    var x1: Int = .zero
-    var x2: Int?
 }
 
 struct PredicateABCD: Equatable {

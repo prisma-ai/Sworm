@@ -5,6 +5,8 @@ import XCTest
 
 @available(OSX 10.15, *)
 final class AttributeTests: XCTestCase {
+    // MARK: Internal
+
     func testPrimitiveAttributeFullSetReadWrite() {
         TestDB.temporaryContainer(store: DataModels.attributes) { pc in
             let sourceInstance = PrimitiveAttributeFullSet(
@@ -136,6 +138,8 @@ final class AttributeTests: XCTestCase {
             }
         }
     }
+
+    // MARK: Private
 
     private func writeRandomPrimitiveAttributeFullSets(n: Int, pc: PersistentContainer) throws {
         try pc.perform { ctx in

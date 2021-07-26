@@ -51,4 +51,4 @@ dependencies: [
 
 ## Code style
 
-`swiftformat --self insert --swiftversion 5.3 .`
+`swiftformat --swiftversion 5.3 .`

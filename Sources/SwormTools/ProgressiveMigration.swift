@@ -1,61 +1,7 @@
 import CoreData
 
 public final class SQLiteProgressiveMigration {
-    public enum Error: Swift.Error {
-        case storeCompatibleModelNotFound
-    }
-
-    public typealias Progress = (Int, Int) -> Void
-
-    final class Step {
-        enum Source {
-            case auto
-            case bundle(Bundle, String)
-        }
-
-        let sourceModel: NSManagedObjectModel
-        let destinationModel: NSManagedObjectModel
-        let mappingModel: NSMappingModel
-
-        init(
-            sourceModel: NSManagedObjectModel,
-            destinationModel: NSManagedObjectModel,
-            source: Source
-        ) throws {
-            switch source {
-            case .auto:
-                self.mappingModel = try NSMappingModel.inferredMappingModel(
-                    forSourceModel: sourceModel,
-                    destinationModel: destinationModel
-                )
-            case let .bundle(bundle, name):
-                self.mappingModel = try bundle.mappingModel(name: name)
-            }
-            self.sourceModel = sourceModel
-            self.destinationModel = destinationModel
-        }
-
-        func migrate(from sourceURL: URL, to destinationURL: URL) throws {
-            try NSMigrationManager(
-                sourceModel: self.sourceModel,
-                destinationModel: self.destinationModel
-            ).migrateStore(
-                from: sourceURL,
-                sourceType: NSSQLiteStoreType,
-                options: nil,
-                with: self.mappingModel,
-                toDestinationURL: destinationURL,
-                destinationType: NSSQLiteStoreType,
-                destinationOptions: nil
-            )
-        }
-    }
-
-    let originalStoreURL: URL
-    let metadata: [String: Any]
-    let currentModel: NSManagedObjectModel
-    let bundle: Bundle
-    let steps: [Step]
+    // MARK: Lifecycle
 
     public init?(store: SQLiteStoreDescription, bundle: Bundle) throws {
         guard let metadata = try? NSPersistentStoreCoordinator.metadataForPersistentStore(
@@ -96,6 +42,14 @@ public final class SQLiteProgressiveMigration {
         self.bundle = bundle
         self.steps = steps
     }
+
+    // MARK: Public
+
+    public enum Error: Swift.Error {
+        case storeCompatibleModelNotFound
+    }
+
+    public typealias Progress = (Int, Int) -> Void
 
     public var stepCount: Int {
         self.steps.count
@@ -143,4 +97,60 @@ public final class SQLiteProgressiveMigration {
             try storeCoordinator.destroySQLiteStore(at: currentStoreURL)
         }
     }
+
+    // MARK: Internal
+
+    final class Step {
+        // MARK: Lifecycle
+
+        init(
+            sourceModel: NSManagedObjectModel,
+            destinationModel: NSManagedObjectModel,
+            source: Source
+        ) throws {
+            switch source {
+            case .auto:
+                self.mappingModel = try NSMappingModel.inferredMappingModel(
+                    forSourceModel: sourceModel,
+                    destinationModel: destinationModel
+                )
+            case let .bundle(bundle, name):
+                self.mappingModel = try bundle.mappingModel(name: name)
+            }
+            self.sourceModel = sourceModel
+            self.destinationModel = destinationModel
+        }
+
+        // MARK: Internal
+
+        enum Source {
+            case auto
+            case bundle(Bundle, String)
+        }
+
+        let sourceModel: NSManagedObjectModel
+        let destinationModel: NSManagedObjectModel
+        let mappingModel: NSMappingModel
+
+        func migrate(from sourceURL: URL, to destinationURL: URL) throws {
+            try NSMigrationManager(
+                sourceModel: self.sourceModel,
+                destinationModel: self.destinationModel
+            ).migrateStore(
+                from: sourceURL,
+                sourceType: NSSQLiteStoreType,
+                options: nil,
+                with: self.mappingModel,
+                toDestinationURL: destinationURL,
+                destinationType: NSSQLiteStoreType,
+                destinationOptions: nil
+            )
+        }
+    }
+
+    let originalStoreURL: URL
+    let metadata: [String: Any]
+    let currentModel: NSManagedObjectModel
+    let bundle: Bundle
+    let steps: [Step]
 }

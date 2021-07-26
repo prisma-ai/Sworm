@@ -1,0 +1,7 @@
+--self insert
+--wrapcollections before-first
+--wraparguments before-first
+--wrapparameters before-first
+--header strip
+--enable wrapSwitchCases
+--enable organizeDeclarations

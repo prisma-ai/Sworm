@@ -12,13 +12,7 @@ public extension ManagedObjectConvertible {
 }
 
 public struct Request<PlainObject: ManagedObjectConvertible> {
-    typealias SortDescriptor = (keyPath: PartialKeyPath<PlainObject>, ascending: Bool)
-
-    let fetchLimit: Int?
-    let fetchOffset: Int?
-
-    let predicateDescriptor: PredicateDescriptor?
-    let sortDescriptors: [SortDescriptor]
+    // MARK: Public
 
     public func limit(_ value: Int) -> Request<PlainObject> {
         .init(
@@ -79,6 +73,16 @@ public struct Request<PlainObject: ManagedObjectConvertible> {
             sortDescriptors: self.sortDescriptors + [(keyPath, ascending)]
         )
     }
+
+    // MARK: Internal
+
+    typealias SortDescriptor = (keyPath: PartialKeyPath<PlainObject>, ascending: Bool)
+
+    let fetchLimit: Int?
+    let fetchOffset: Int?
+
+    let predicateDescriptor: PredicateDescriptor?
+    let sortDescriptors: [SortDescriptor]
 }
 
 extension Request {

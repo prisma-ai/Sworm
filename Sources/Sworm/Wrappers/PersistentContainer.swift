@@ -16,11 +16,39 @@ public final class PersistentContainer {
     // MARK: Public
 
     @discardableResult
-    public func perform<T>(action: @escaping (ManagedObjectContext) throws -> T) throws -> T {
+    public func perform<T>(
+        action: @escaping (ManagedObjectContext) throws -> T
+    ) throws -> T {
         do {
             let context = try self.managedObjectContext()
 
-            return try DataHelper.performAndWait(in: context, resetAfterExecution: self.cleanUpAfterExecution) {
+            return try DataHelper.performAndWait(
+                in: context,
+                resetAfterExecution: self.cleanUpAfterExecution
+            ) {
+                try action(.init(context))
+            }
+        } catch {
+            self.logError?(error)
+
+            throw error
+        }
+    }
+
+    @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
+    @discardableResult
+    public func schedule<T>(
+        immediate: Bool = false,
+        action: @escaping (ManagedObjectContext) throws -> T
+    ) async throws -> T {
+        do {
+            let context = try self.managedObjectContext()
+
+            return try await DataHelper.schedule(
+                in: context,
+                immediate: immediate,
+                resetAfterExecution: self.cleanUpAfterExecution
+            ) {
                 try action(.init(context))
             }
         } catch {

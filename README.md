@@ -48,7 +48,3 @@ dependencies: [
     .package(url: "https://github.com/prisma-ai/Sworm.git", .upToNextMajor(from: "1.0.0"))
 ]
 ```
-
-## Code style
-
-`swiftformat --swiftversion 5.3 .`

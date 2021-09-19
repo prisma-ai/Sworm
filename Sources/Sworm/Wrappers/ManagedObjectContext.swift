@@ -38,7 +38,7 @@ public final class ManagedObjectContext {
     @discardableResult
     public func batchDelete<PlainObject: ManagedObjectConvertible>(
         _ request: Request<PlainObject>
-    ) throws -> Int {
+    ) throws -> Int where PlainObject.Relations == Void {
         let fetchRequest = request.makeFetchRequest(
             ofType: (NSFetchRequestResult.self, .managedObjectIDResultType),
             attributesToFetch: []

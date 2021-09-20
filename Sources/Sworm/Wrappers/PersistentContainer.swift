@@ -15,18 +15,39 @@ public final class PersistentContainer {
 
     // MARK: Public
 
+    public enum Error: Swift.Error {
+        case noResult
+    }
+
     @discardableResult
     public func perform<T>(
         action: @escaping (ManagedObjectContext) throws -> T
     ) throws -> T {
         do {
             let context = try self.managedObjectContext()
+            let reset = self.cleanUpAfterExecution
 
-            return try DataHelper.performAndWait(
-                in: context,
-                resetAfterExecution: self.cleanUpAfterExecution
-            ) {
-                try action(.init(context))
+            if #available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *) {
+                return try context.performAndWait {
+                    try context.execute(reset, action)
+                }
+            } else {
+                var result: Result<T, Swift.Error>?
+
+                context.performAndWait {
+                    result = Result(catching: {
+                        try context.execute(reset, action)
+                    })
+                }
+
+                switch result {
+                case let .success(value):
+                    return value
+                case let .failure(error):
+                    throw error
+                case .none:
+                    throw Self.Error.noResult
+                }
             }
         } catch {
             self.logError?(error)
@@ -43,13 +64,10 @@ public final class PersistentContainer {
     ) async throws -> T {
         do {
             let context = try self.managedObjectContext()
+            let reset = self.cleanUpAfterExecution
 
-            return try await DataHelper.schedule(
-                in: context,
-                immediate: immediate,
-                resetAfterExecution: self.cleanUpAfterExecution
-            ) {
-                try action(.init(context))
+            return try await context.perform(schedule: immediate ? .immediate : .enqueued) {
+                try context.execute(reset, action)
             }
         } catch {
             self.logError?(error)

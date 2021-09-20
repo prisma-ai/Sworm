@@ -9,10 +9,15 @@ public final class ManagedObjectContext {
 
     // MARK: Public
 
+    public enum Error: Swift.Error {
+        case unknownEntity(String)
+    }
+
     @discardableResult
     public func insert<PlainObject: ManagedObjectConvertible>(_ value: PlainObject) throws -> ManagedObject<PlainObject> {
-        let managedObject = try DataHelper.insert(entity: PlainObject.entityName, into: self.instance)
-
+        guard let managedObject = self.instance.insert(entity: PlainObject.entityName) else {
+            throw Self.Error.unknownEntity(PlainObject.entityName)
+        }
         return ManagedObject(instance: managedObject).encode(value)
     }
 

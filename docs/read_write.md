@@ -4,10 +4,18 @@ The point of interaction with the data graph in Sworm is the PersistentContainer
 
 `let pc = PersistentContainer(...)`
 
-further, all you need to do is call the `pc`'s only method:
+further, all you need to do is call the `pc`'s method:
 
 ``` swift
 try pc.perform { ctx in
+    // read write your data here
+}
+```
+
+or it's concurrent counterpart:
+
+``` swift
+try await pc.schedule { ctx in
     // read write your data here
 }
 ```

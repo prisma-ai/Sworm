@@ -18,8 +18,6 @@ public func || (
     Query.or(left, right)
 }
 
-// MARK: -
-
 public func == <PlainObject: ManagedObjectConvertible, Attribute: SupportedAttributeType>(
     keyPath: KeyPath<PlainObject, Attribute>,
     value: Attribute
@@ -68,8 +66,6 @@ public func === <PlainObject: ManagedObjectConvertible, Attribute: SupportedAttr
 ) -> Predicate where Attribute.PrimitiveAttributeType: Equatable {
     Query.in(keyPath, values)
 }
-
-// MARK: -
 
 public func == <PlainObject: ManagedObjectConvertible, Attribute: SupportedAttributeType>(
     keyPath: KeyPath<PlainObject, Attribute?>,

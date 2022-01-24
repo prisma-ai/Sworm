@@ -1,29 +1,6 @@
 import CoreData
 
 public struct SQLiteStoreDescription {
-    public struct ModelVersion: ExpressibleByStringLiteral {
-        public let name: String
-        public let mappingModelName: String?
-
-        public init(
-            name: String,
-            mappingModelName: String?
-        ) {
-            self.name = name
-            self.mappingModelName = mappingModelName
-        }
-
-        public init(stringLiteral value: String) {
-            self.name = value
-            self.mappingModelName = nil
-        }
-    }
-
-    public let name: String
-    public let url: URL
-    public let modelName: String
-    public let modelVersions: [ModelVersion]
-
     public init(
         name: String,
         url: URL,
@@ -37,6 +14,29 @@ public struct SQLiteStoreDescription {
         self.modelName = modelName
         self.modelVersions = modelVersions
     }
+
+    public struct ModelVersion: ExpressibleByStringLiteral {
+        public init(
+            name: String,
+            mappingModelName: String?
+        ) {
+            self.name = name
+            self.mappingModelName = mappingModelName
+        }
+
+        public init(stringLiteral value: String) {
+            self.name = value
+            self.mappingModelName = nil
+        }
+
+        public let name: String
+        public let mappingModelName: String?
+    }
+
+    public let name: String
+    public let url: URL
+    public let modelName: String
+    public let modelVersions: [ModelVersion]
 
     public func with(url: URL) -> SQLiteStoreDescription {
         .init(

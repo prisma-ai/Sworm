@@ -1,23 +1,23 @@
 public struct ToOneRelation<Destination: ManagedObjectConvertible> {
-    let name: String
-
     public init(_ name: String) {
         self.name = name
     }
+
+    let name: String
 }
 
 public struct ToManyRelation<Destination: ManagedObjectConvertible> {
-    let name: String
-
     public init(_ name: String) {
         self.name = name
     }
+
+    let name: String
 }
 
 public struct ToManyOrderedRelation<Destination: ManagedObjectConvertible> {
-    let name: String
-
     public init(_ name: String) {
         self.name = name
     }
+
+    let name: String
 }

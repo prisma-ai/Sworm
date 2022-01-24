@@ -45,10 +45,6 @@ Use SPM:
 
 ``` swift
 dependencies: [
-    .package(url: "https://github.com/geor-kasapidi/Sworm.git", .upToNextMajor(from: "1.0.0"))
+    .package(url: "https://github.com/prisma-ai/Sworm.git", .upToNextMajor(from: "1.0.0"))
 ]
 ```
-
-## Code style
-
-`swiftformat --self insert --swiftversion 5.3 .`

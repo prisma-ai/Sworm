@@ -1,4 +1,4 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.5
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -22,14 +22,8 @@ let package = Package(
         ),
     ],
     targets: [
-        .target(
-            name: "Sworm",
-            dependencies: []
-        ),
-        .target(
-            name: "SwormTools",
-            dependencies: []
-        ),
+        .target(name: "Sworm"),
+        .target(name: "SwormTools"),
         .testTarget(
             name: "SwormTests",
             dependencies: ["Sworm", "SwormTools"]

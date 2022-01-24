@@ -6,7 +6,7 @@ import XCTest
 @available(OSX 10.15, *)
 final class AttributeTests: XCTestCase {
     func testPrimitiveAttributeFullSetReadWrite() {
-        TestDB.temporaryContainer(store: DataModels.attributes) { pc in
+        TestDB.perform(with: DataModels.attributes) { pc in
             let sourceInstance = PrimitiveAttributeFullSet(
                 x1: .random(),
                 x2: .random(in: .min ... .max),
@@ -36,7 +36,7 @@ final class AttributeTests: XCTestCase {
     }
 
     func testCustomAttributeSetReadWrite() {
-        TestDB.temporaryContainer(store: DataModels.attributes) { pc in
+        TestDB.perform(with: DataModels.attributes) { pc in
             let sourceInstances = [
                 CustomAttributeSet(
                     x1: .init(.init(x: 1, y: 2)),
@@ -72,7 +72,7 @@ final class AttributeTests: XCTestCase {
     }
 
     func testDemoAttributeSetRefReadWrite() {
-        TestDB.temporaryContainer(store: DataModels.attributes) { pc in
+        TestDB.perform(with: DataModels.attributes) { pc in
             let sourceInstance1 = DemoAttributeSetRef()
             sourceInstance1.x1 = 10
 
@@ -96,7 +96,7 @@ final class AttributeTests: XCTestCase {
     func _testPrimitiveAttributeFullSetReadWriteMeasure() {
         let N = 10000
 
-        TestDB.temporaryContainer(store: DataModels.attributes) { pc in
+        TestDB.perform(with: DataModels.attributes) { pc in
             self.measure {
                 do {
                     try self.writeRandomPrimitiveAttributeFullSets(n: N, pc: pc)
@@ -112,7 +112,7 @@ final class AttributeTests: XCTestCase {
     func _testPrimitiveAttributeFullSetWriteMeasure() {
         let N = 10000
 
-        TestDB.temporaryContainer(store: DataModels.attributes) { pc in
+        TestDB.perform(with: DataModels.attributes) { pc in
             self.measure {
                 do {
                     try self.writeRandomPrimitiveAttributeFullSets(n: N, pc: pc)
@@ -124,7 +124,7 @@ final class AttributeTests: XCTestCase {
     func _testPrimitiveAttributeFullSetReadMeasure() {
         let N = 10000
 
-        TestDB.temporaryContainer(store: DataModels.attributes) { pc in
+        TestDB.perform(with: DataModels.attributes) { pc in
             try self.writeRandomPrimitiveAttributeFullSets(n: N, pc: pc)
 
             self.measure {

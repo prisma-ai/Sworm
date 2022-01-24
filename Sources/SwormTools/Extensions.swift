@@ -71,8 +71,6 @@ public extension NSPersistentStoreDescription {
     }
 }
 
-// MARK: - Internal
-
 extension FileManager {
     func createUniqueTemporaryDirectory() throws -> URL {
         let url = self.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)

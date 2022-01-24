@@ -2,13 +2,9 @@ import CoreData
 
 @dynamicMemberLookup
 public final class ManagedObject<PlainObject: ManagedObjectConvertible> {
-    unowned let instance: NSManagedObject
-
     internal init(instance: NSManagedObject) {
         self.instance = instance
     }
-
-    // MARK: - Decode
 
     public func decode() throws -> PlainObject {
         try .init(from: self.instance)
@@ -29,8 +25,6 @@ public final class ManagedObject<PlainObject: ManagedObjectConvertible> {
             primitiveValue: PlainObject.attribute(keyPath).name
         ])
     }
-
-    // MARK: - Encode
 
     @discardableResult
     public func encode(_ value: PlainObject) -> Self {
@@ -58,8 +52,6 @@ public final class ManagedObject<PlainObject: ManagedObjectConvertible> {
 
         return self
     }
-
-    // MARK: - Relations
 
     public subscript<Destination: ManagedObjectConvertible>(
         dynamicMember keyPath: KeyPath<PlainObject.Relations, ToOneRelation<Destination>>
@@ -93,6 +85,8 @@ public final class ManagedObject<PlainObject: ManagedObjectConvertible> {
 
         return .init(name: destination.name, instance: self.instance)
     }
+
+    unowned let instance: NSManagedObject
 }
 
 public extension ManagedObject {

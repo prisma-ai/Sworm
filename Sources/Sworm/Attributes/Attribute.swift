@@ -1,20 +1,6 @@
 import CoreData
 
 public final class Attribute<PlainObject: ManagedObjectConvertible>: Hashable {
-    let name: String
-    let keyPath: PartialKeyPath<PlainObject>
-
-    let encode: (PlainObject, NSManagedObject) -> Void
-    let decode: (inout PlainObject, NSManagedObject) throws -> Void
-
-    public func hash(into hasher: inout Hasher) {
-        self.keyPath.hash(into: &hasher)
-    }
-
-    public static func == (lhs: Attribute<PlainObject>, rhs: Attribute<PlainObject>) -> Bool {
-        lhs.keyPath == rhs.keyPath
-    }
-
     public init<Attribute: SupportedAttributeType>(
         _ keyPath: WritableKeyPath<PlainObject, Attribute>,
         _ name: String
@@ -62,6 +48,20 @@ public final class Attribute<PlainObject: ManagedObjectConvertible>: Hashable {
             }
         }
     }
+
+    public static func == (lhs: Attribute<PlainObject>, rhs: Attribute<PlainObject>) -> Bool {
+        lhs.keyPath == rhs.keyPath
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        self.keyPath.hash(into: &hasher)
+    }
+
+    let name: String
+    let keyPath: PartialKeyPath<PlainObject>
+
+    let encode: (PlainObject, NSManagedObject) -> Void
+    let decode: (inout PlainObject, NSManagedObject) throws -> Void
 }
 
 extension ManagedObjectConvertible {

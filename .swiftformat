@@ -1,0 +1,8 @@
+--self insert
+--wrapcollections before-first
+--wraparguments before-first
+--wrapparameters before-first
+--header strip
+--ifdef no-indent
+--enable wrapSwitchCases
+--swiftversion 5.5

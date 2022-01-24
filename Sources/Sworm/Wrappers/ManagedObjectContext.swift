@@ -1,16 +1,19 @@
 import CoreData
 
 public final class ManagedObjectContext {
-    unowned let instance: NSManagedObjectContext
-
     internal init(_ instance: NSManagedObjectContext) {
         self.instance = instance
     }
 
+    public enum Error: Swift.Error {
+        case unknownEntity(String)
+    }
+
     @discardableResult
     public func insert<PlainObject: ManagedObjectConvertible>(_ value: PlainObject) throws -> ManagedObject<PlainObject> {
-        let managedObject = try DataHelper.insert(entity: PlainObject.entityName, into: self.instance)
-
+        guard let managedObject = self.instance.insert(entity: PlainObject.entityName) else {
+            throw Self.Error.unknownEntity(PlainObject.entityName)
+        }
         return ManagedObject(instance: managedObject).encode(value)
     }
 
@@ -36,7 +39,7 @@ public final class ManagedObjectContext {
     @discardableResult
     public func batchDelete<PlainObject: ManagedObjectConvertible>(
         _ request: Request<PlainObject>
-    ) throws -> Int {
+    ) throws -> Int where PlainObject.Relations == Void {
         let fetchRequest = request.makeFetchRequest(
             ofType: (NSFetchRequestResult.self, .managedObjectIDResultType),
             attributesToFetch: []
@@ -105,6 +108,8 @@ public final class ManagedObjectContext {
             try Attribute?.decode($0[attribute.name])
         }
     }
+
+    unowned let instance: NSManagedObjectContext
 }
 
 public extension ManagedObjectContext {

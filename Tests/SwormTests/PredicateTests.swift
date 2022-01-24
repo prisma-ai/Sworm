@@ -17,7 +17,7 @@ final class PredicateTests: XCTestCase {
     }
 
     func testEqualityAndComparability() {
-        TestDB.temporaryContainer(store: DataModels.predicates) { pc in
+        TestDB.perform(with: DataModels.predicates) { pc in
             let sourceEntries = [
                 PredicateABCD(a: 10, b: 20),
                 PredicateABCD(a: 30, b: 40),
@@ -60,7 +60,7 @@ final class PredicateTests: XCTestCase {
     }
 
     func testNilComparison() {
-        TestDB.temporaryContainer(store: DataModels.predicates) { pc in
+        TestDB.perform(with: DataModels.predicates) { pc in
             let sourceEntries = [
                 PredicateABCD(a: 10, b: 20, c: nil),
                 PredicateABCD(a: 30, b: 40, c: "foo"),
@@ -101,7 +101,7 @@ final class PredicateTests: XCTestCase {
     }
 
     func testNonPrimitiveAttributeQuery() {
-        TestDB.temporaryContainer(store: DataModels.predicates) { pc in
+        TestDB.perform(with: DataModels.predicates) { pc in
             let sourceEntries = [
                 PredicateABCD(a: 1, d: .foo),
                 PredicateABCD(a: 2, d: .bar),
@@ -144,7 +144,7 @@ final class PredicateTests: XCTestCase {
     }
 
     func testUUIDAndURLQuery() {
-        TestDB.temporaryContainer(store: DataModels.predicates) { pc in
+        TestDB.perform(with: DataModels.predicates) { pc in
             let ids: [UUID] = [.init(), .init(), .init()]
             let urls: [URL?] = [
                 URL(string: "https://xyz.com"),
@@ -183,7 +183,7 @@ final class PredicateTests: XCTestCase {
     }
 
     func testInLittle() {
-        TestDB.temporaryContainer(store: DataModels.predicates) { pc in
+        TestDB.perform(with: DataModels.predicates) { pc in
             let sourceEntries = [
                 PredicateABCD(a: 1, c: "a"),
                 PredicateABCD(a: 2, c: "b"),
@@ -229,7 +229,7 @@ final class PredicateTests: XCTestCase {
     func testInBig() {
         let N = 200
 
-        TestDB.temporaryContainer(store: DataModels.predicates) { pc in
+        TestDB.perform(with: DataModels.predicates) { pc in
             let sourceEntries = (0 ..< N).map { _ in
                 PredicateIDURL(id: .init())
             }
@@ -255,7 +255,7 @@ final class PredicateTests: XCTestCase {
     }
 
     func testStringComparability() {
-        TestDB.temporaryContainer(store: DataModels.predicates) { pc in
+        TestDB.perform(with: DataModels.predicates) { pc in
             let sourceEntries = [
                 PredicateABCD(c: "fOo1baR"),
                 PredicateABCD(c: "foO2bAr"),

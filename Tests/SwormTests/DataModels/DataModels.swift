@@ -35,4 +35,11 @@ enum DataModels {
             "V3",
         ]
     )
+
+    static let repo = SQLiteStoreDescription(
+        name: "RepoDataModel",
+        url: FileManager.default.temporaryDirectory,
+        modelName: "RepoDataModel",
+        modelVersions: ["V0"]
+    )
 }

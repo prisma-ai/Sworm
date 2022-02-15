@@ -39,6 +39,7 @@ public final class SQLiteProgressiveMigration {
         self.currentModel = models[currentModelIndex]
         self.bundle = bundle
         self.steps = steps
+        self.currentModelIndex = currentModelIndex
     }
 
     public enum Error: Swift.Error {
@@ -46,6 +47,8 @@ public final class SQLiteProgressiveMigration {
     }
 
     public typealias Progress = (Int, Int) -> Void
+
+    public let currentModelIndex: Int
 
     public var stepCount: Int {
         self.steps.count

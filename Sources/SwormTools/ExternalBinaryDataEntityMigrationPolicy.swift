@@ -17,9 +17,7 @@ public final class ExternalBinaryDataEntityMigrationPolicy: NSEntityMigrationPol
             try manager.destinationContext.save()
 
             attributes.forEach {
-                if $0.value.allowsExternalBinaryDataStorage {
-                    sInstance.setValue(nil, forKey: $0.key)
-                }
+                sInstance.setValue(nil, forKey: $0.key)
             }
 
             try manager.sourceContext.save()

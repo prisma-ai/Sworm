@@ -1,7 +1,12 @@
 import CoreData
 
 public final class SQLiteProgressiveMigration {
-    public init?(store: SQLiteStoreDescription, bundle: Bundle) throws {
+    public init?(
+        store: SQLiteStoreDescription,
+        bundle: Bundle,
+        defaultEntityMigrationPolicyClassName: String? = nil,
+        writableSourceStores: Bool = false
+    ) throws {
         guard let metadata = try? NSPersistentStoreCoordinator.metadataForPersistentStore(
             ofType: NSSQLiteStoreType,
             at: store.url,
@@ -26,7 +31,8 @@ public final class SQLiteProgressiveMigration {
             try Step(
                 sourceModel: models[$0],
                 destinationModel: models[$1],
-                source: store.modelVersions[$1].mappingModelName.flatMap { .bundle(bundle, $0) } ?? .auto
+                source: store.modelVersions[$1].mappingModelName.flatMap { .bundle(bundle, $0) } ?? .auto,
+                defaultEntityMigrationPolicyClassName: defaultEntityMigrationPolicyClassName
             )
         }
 
@@ -40,6 +46,7 @@ public final class SQLiteProgressiveMigration {
         self.bundle = bundle
         self.steps = steps
         self.currentModelIndex = currentModelIndex
+        self.writableSourceStores = writableSourceStores
     }
 
     public enum Error: Swift.Error {
@@ -54,7 +61,10 @@ public final class SQLiteProgressiveMigration {
         self.steps.count
     }
 
-    public func performMigration(progress: Progress?) throws {
+    public func performMigration(
+        progress: Progress?,
+        temporaryDirectory: URL = FileManager.default.temporaryDirectory
+    ) throws {
         let storeCoordinator = NSPersistentStoreCoordinator(
             managedObjectModel: self.currentModel
         )
@@ -66,16 +76,12 @@ public final class SQLiteProgressiveMigration {
         var currentStoreURL = self.originalStoreURL
 
         for (index, step) in self.steps.enumerated() {
-            let newStoreURL = URL(
-                fileURLWithPath: NSTemporaryDirectory(),
-                isDirectory: true
-            ).appendingPathComponent(
-                UUID().uuidString
-            )
+            let newStoreURL = temporaryDirectory.appendingPathComponent(UUID().uuidString)
 
             try step.migrate(
                 from: currentStoreURL,
-                to: newStoreURL
+                to: newStoreURL,
+                readOnlySource: !self.writableSourceStores
             )
 
             if currentStoreURL != self.originalStoreURL {
@@ -101,19 +107,32 @@ public final class SQLiteProgressiveMigration {
         init(
             sourceModel: NSManagedObjectModel,
             destinationModel: NSManagedObjectModel,
-            source: Source
+            source: Source,
+            defaultEntityMigrationPolicyClassName: String?
         ) throws {
+            let mappingModel: NSMappingModel
+
             switch source {
             case .auto:
-                self.mappingModel = try NSMappingModel.inferredMappingModel(
+                mappingModel = try NSMappingModel.inferredMappingModel(
                     forSourceModel: sourceModel,
                     destinationModel: destinationModel
                 )
             case let .bundle(bundle, name):
-                self.mappingModel = try bundle.mappingModel(name: name)
+                mappingModel = try bundle.mappingModel(name: name)
             }
+
+            if let defaultEntityMigrationPolicyClassName = defaultEntityMigrationPolicyClassName {
+                mappingModel.entityMappings.forEach {
+                    if $0.entityMigrationPolicyClassName == nil {
+                        $0.entityMigrationPolicyClassName = defaultEntityMigrationPolicyClassName
+                    }
+                }
+            }
+
             self.sourceModel = sourceModel
             self.destinationModel = destinationModel
+            self.mappingModel = mappingModel
         }
 
         enum Source {
@@ -125,14 +144,18 @@ public final class SQLiteProgressiveMigration {
         let destinationModel: NSManagedObjectModel
         let mappingModel: NSMappingModel
 
-        func migrate(from sourceURL: URL, to destinationURL: URL) throws {
+        func migrate(
+            from sourceURL: URL,
+            to destinationURL: URL,
+            readOnlySource: Bool
+        ) throws {
             try NSMigrationManager(
                 sourceModel: self.sourceModel,
                 destinationModel: self.destinationModel
             ).migrateStore(
                 from: sourceURL,
                 sourceType: NSSQLiteStoreType,
-                options: nil,
+                options: [NSReadOnlyPersistentStoreOption: NSNumber(value: readOnlySource)],
                 with: self.mappingModel,
                 toDestinationURL: destinationURL,
                 destinationType: NSSQLiteStoreType,
@@ -146,4 +169,5 @@ public final class SQLiteProgressiveMigration {
     let currentModel: NSManagedObjectModel
     let bundle: Bundle
     let steps: [Step]
+    let writableSourceStores: Bool
 }

@@ -42,4 +42,11 @@ enum DataModels {
         modelName: "RepoDataModel",
         modelVersions: ["V0"]
     )
+
+    static let blob = SQLiteStoreDescription(
+        name: "BLOBModel",
+        url: FileManager.default.temporaryDirectory,
+        modelName: "BLOBModel",
+        modelVersions: ["V0", "V1", "V2", "V3"]
+    )
 }

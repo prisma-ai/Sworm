@@ -136,3 +136,7 @@ enum BookLibrary {
         var year: Int = 0
     }
 }
+
+struct Blob {
+    var data: Data = .init()
+}

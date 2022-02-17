@@ -185,3 +185,13 @@ extension BookLibrary.Book: ManagedObjectConvertible {
 
     static let relations = Relations()
 }
+
+extension Blob: ManagedObjectConvertible {
+    static let entityName: String = "Blob"
+
+    static let attributes: Set<Attribute<Blob>> = [
+        .init(\.data, "data"),
+    ]
+
+    static let relations: Void = ()
+}

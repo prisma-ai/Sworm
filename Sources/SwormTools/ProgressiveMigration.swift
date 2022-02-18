@@ -78,11 +78,13 @@ public final class SQLiteProgressiveMigration {
         for (index, step) in self.steps.enumerated() {
             let newStoreURL = temporaryDirectory.appendingPathComponent(UUID().uuidString)
 
-            try step.migrate(
-                from: currentStoreURL,
-                to: newStoreURL,
-                readOnlySource: !self.writableSourceStores
-            )
+            try autoreleasepool {
+                try step.migrate(
+                    from: currentStoreURL,
+                    to: newStoreURL,
+                    readOnlySource: !self.writableSourceStores
+                )
+            }
 
             if currentStoreURL != self.originalStoreURL {
                 try storeCoordinator.destroySQLiteStore(at: currentStoreURL)

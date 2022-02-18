@@ -13,14 +13,25 @@ public final class ExternalBinaryDataEntityMigrationPolicy: NSEntityMigrationPol
             $0.value.isOptional && $0.value.allowsExternalBinaryDataStorage
         }
 
-        if !attributes.isEmpty {
-            try manager.destinationContext.save()
+        guard !attributes.isEmpty else {
+            return
+        }
 
-            attributes.forEach {
-                sInstance.setValue(nil, forKey: $0.key)
-            }
+        try manager.destinationContext.save()
 
-            try manager.sourceContext.save()
+        attributes.forEach {
+            sInstance.setValue(nil, forKey: $0.key)
+        }
+
+        try manager.sourceContext.save()
+
+        let destinationInstances = manager.destinationInstances(
+            forEntityMappingName: mapping.name,
+            sourceInstances: [sInstance]
+        )
+
+        destinationInstances.forEach {
+            manager.destinationContext.refresh($0, mergeChanges: false)
         }
     }
 }

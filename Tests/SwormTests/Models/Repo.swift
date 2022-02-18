@@ -26,6 +26,14 @@ final class Repo<T: IdentifiableManagedObjectConvertible> {
         }
     }
 
+    func update(item: T) throws {
+        try self.pc.perform { context in
+            if let object = try context.fetchOne(T.all.where(T.idKeyPath == item[keyPath: T.idKeyPath])) {
+                object.encode(item)
+            }
+        }
+    }
+
     func delete(item: T) throws {
         try self.pc.perform { context in
             try context.delete(T.all.where(T.idKeyPath == item[keyPath: T.idKeyPath]))

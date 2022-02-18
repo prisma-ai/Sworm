@@ -172,4 +172,64 @@ final class MigrationsTests: XCTestCase {
             XCTFail(error.localizedDescription)
         }
     }
+
+    func testBlobsMigration() throws {
+        let dir = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+
+        let file = dir.appendingPathComponent("store.sqlite", isDirectory: false)
+
+        let storeInfo = DataModels.blob.with(url: file)
+
+        try autoreleasepool {
+            let nspc = try NSPersistentContainer(
+                store: storeInfo.with(maxVersion: 0),
+                bundle: .module
+            )
+
+            try nspc.loadPersistentStore()
+
+            let pc = PersistentContainer(managedObjectContext: nspc.newBackgroundContext)
+
+            try pc.perform { context in
+                try (0 ..< 100).forEach { _ in
+                    try context.insert(Blob(data: .init(repeating: 1, count: 10 * 1024 * 1024)))
+                }
+            }
+        }
+
+        do {
+            guard let migration = try SQLiteProgressiveMigration(
+                store: storeInfo,
+                bundle: .module,
+                defaultEntityMigrationPolicyClassName: NSStringFromClass(ExternalBinaryDataEntityMigrationPolicy.self),
+                writableSourceStores: true
+            ) else {
+                throw SQLiteProgressiveMigration.Error.storeCompatibleModelNotFound
+            }
+
+            try migration.performMigration(progress: nil)
+        }
+
+        try autoreleasepool {
+            let nspc = try NSPersistentContainer(
+                store: storeInfo,
+                bundle: .module
+            )
+
+            try nspc.loadPersistentStore()
+
+            let pc = PersistentContainer(managedObjectContext: nspc.newBackgroundContext)
+
+            try pc.perform { context in
+                let blobs = try context.fetch(Blob.all).map { try $0.decode() }
+
+                blobs.forEach {
+                    XCTAssert($0.data == .init(repeating: 1, count: 10 * 1024 * 1024))
+                }
+            }
+        }
+
+        try FileManager.default.removeItem(at: dir)
+    }
 }

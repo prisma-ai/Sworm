@@ -11,11 +11,23 @@ final class RepoTests: XCTestCase {
 
             XCTAssert((try repo.fetchAll()).isEmpty)
 
-            let entity = RepoEntity(id: .init(), text: "foo")
+            // insert
+
+            var entity = RepoEntity(id: .init(), text: "foo")
 
             try repo.insert(item: entity)
 
             XCTAssert((try repo.fetchAll()) == [entity])
+
+            // update
+
+            entity.text = "bar"
+
+            try repo.update(item: entity)
+
+            XCTAssert((try repo.fetchAll()) == [entity])
+
+            // delete
 
             try repo.delete(item: entity)
 

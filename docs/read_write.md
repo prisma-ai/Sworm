@@ -77,7 +77,7 @@ try pc.perform { ctx in
     // get your pure swift entity
     let author = try authorObject.decode()
     // or single attribute
-    let authorName = try author.decode(\.name)
+    let authorName = try authorObject.decode(\.name)
 
     // update its value
     authorObject.encode(Author(name: "foo", age: 50))

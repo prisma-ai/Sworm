@@ -65,4 +65,23 @@ try pc.perform { ctx in
 }
 ```
 
-In addition to accessing graphics, ManagedObject has a set of paired `encode` / `decode` methods that allow you to read / write data models or attributes separately.
+ManagedObject has a set of paired `encode` / `decode` methods that allow you to read / write data models or attributes separately:
+
+``` swift
+try pc.perform { ctx in
+    // fetch ManagedObject<Author>
+    guard let authorObject = try ctx.fetchOne(Author.all) else {
+        return
+    }
+
+    // get your pure swift entity
+    let author = try authorObject.decode()
+    // or single attribute
+    let authorName = try author.decode(\.name)
+
+    // update its value
+    authorObject.encode(Author(name: "foo", age: 50))
+    // or update name only
+    authorObject.encode(\.name, "foo")
+}
+```

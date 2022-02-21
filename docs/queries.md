@@ -47,6 +47,15 @@ Since such queries are used much less often than exclusively attribute queries, 
 
 For sorting by attribute to be possible, the target primitive of the attribute must be Comparable. And that's all you need to know about sorting in Sworm.
 
+Example:
+
+``` swift
+let query = Author
+            .all
+            .sort(\.name, ascending: true)
+            .sort(\.age, ascending: false)
+```
+
 ## Example
 
 At the end i will give an example to make the picture very clear:

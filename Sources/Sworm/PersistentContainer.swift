@@ -1,6 +1,6 @@
 import CoreData
 
-public final class PersistentContainer {
+public final class PersistentContainer: @unchecked Sendable {
     public init(
         managedObjectContext: @escaping () throws -> NSManagedObjectContext,
         logError: ((Swift.Error) -> Void)? = nil,

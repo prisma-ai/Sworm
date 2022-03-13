@@ -1,4 +1,4 @@
-public enum AttributeError: Swift.Error {
+public enum AttributeError: Swift.Error, @unchecked Sendable {
     case badInput(Any?)
     case badAttribute(Context)
 

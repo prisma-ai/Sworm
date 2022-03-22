@@ -52,12 +52,13 @@ public final class PersistentContainer: @unchecked Sendable {
         }
     }
 
-    #if canImport(_Concurrency)
     @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     @discardableResult
     public func schedule<T>(
         action: @escaping (ManagedObjectContext) throws -> T
     ) async throws -> T {
+        try Task.checkCancellation()
+
         do {
             let context = try self.managedObjectContext()
             let reset = self.cleanUpAfterExecution
@@ -68,15 +69,6 @@ public final class PersistentContainer: @unchecked Sendable {
                 }
             }
 
-            #if DEBUG
-            return try await withCheckedThrowingContinuation { continuation in
-                context.perform {
-                    continuation.resume(with: .init(catching: {
-                        try context.execute(reset, action)
-                    }))
-                }
-            }
-            #else
             return try await withUnsafeThrowingContinuation { continuation in
                 context.perform {
                     continuation.resume(with: .init(catching: {
@@ -84,14 +76,12 @@ public final class PersistentContainer: @unchecked Sendable {
                     }))
                 }
             }
-            #endif
         } catch {
             self.logError?(error)
 
             throw error
         }
     }
-    #endif
 
     private let managedObjectContext: () throws -> NSManagedObjectContext
     private let logError: ((Swift.Error) -> Void)?

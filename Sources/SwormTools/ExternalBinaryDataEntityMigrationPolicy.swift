@@ -2,7 +2,7 @@ import CoreData
 
 @objc(ExternalBinaryDataEntityMigrationPolicy)
 open class ExternalBinaryDataEntityMigrationPolicy: NSEntityMigrationPolicy {
-    open override func createDestinationInstances(
+    override open func createDestinationInstances(
         forSource sInstance: NSManagedObject,
         in mapping: NSEntityMapping,
         manager: NSMigrationManager

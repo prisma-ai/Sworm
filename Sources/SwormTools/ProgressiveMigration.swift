@@ -124,7 +124,7 @@ public final class SQLiteProgressiveMigration {
                 mappingModel = try bundle.mappingModel(name: name)
             }
 
-            if let defaultEntityMigrationPolicyClassName = defaultEntityMigrationPolicyClassName {
+            if let defaultEntityMigrationPolicyClassName {
                 mappingModel.entityMappings.forEach {
                     if $0.entityMigrationPolicyClassName == nil {
                         $0.entityMigrationPolicyClassName = defaultEntityMigrationPolicyClassName

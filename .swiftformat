@@ -5,4 +5,5 @@
 --header strip
 --ifdef no-indent
 --enable wrapSwitchCases
---swiftversion 5.5
+--enable redundantOptionalBinding
+--swiftversion 5.7

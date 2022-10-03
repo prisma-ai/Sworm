@@ -17,14 +17,14 @@ public final class ManagedObjectContext {
         return ManagedObject(instance: managedObject).encode(value)
     }
 
-    public func delete<PlainObject: ManagedObjectConvertible>(
-        _ managedObject: ManagedObject<PlainObject>
+    public func delete(
+        _ managedObject: ManagedObject<some ManagedObjectConvertible>
     ) {
         self.instance.delete(managedObject.instance)
     }
 
-    public func delete<PlainObject: ManagedObjectConvertible>(
-        _ request: Request<PlainObject>
+    public func delete(
+        _ request: Request<some ManagedObjectConvertible>
     ) throws {
         let fetchRequest = request.makeFetchRequest(
             ofType: (NSManagedObject.self, .managedObjectResultType),
@@ -53,8 +53,8 @@ public final class ManagedObjectContext {
     }
 
     @discardableResult
-    public func count<PlainObject: ManagedObjectConvertible>(
-        of request: Request<PlainObject>
+    public func count(
+        of request: Request<some ManagedObjectConvertible>
     ) throws -> Int {
         let fetchRequest = request.makeFetchRequest(
             ofType: (NSNumber.self, .countResultType),

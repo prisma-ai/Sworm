@@ -96,7 +96,7 @@ public extension ManagedObject {
         value: Destination?,
         context: ManagedObjectContext
     ) throws -> Self {
-        guard let value = value else {
+        guard let value else {
             return self.delete(keyPath, context: context)
         }
 
@@ -110,8 +110,8 @@ public extension ManagedObject {
     }
 
     @discardableResult
-    func delete<Destination: ManagedObjectConvertible>(
-        _ keyPath: KeyPath<PlainObject.Relations, ToOneRelation<Destination>>,
+    func delete(
+        _ keyPath: KeyPath<PlainObject.Relations, ToOneRelation<some ManagedObjectConvertible>>,
         context: ManagedObjectContext
     ) -> Self {
         if let object = self[dynamicMember: keyPath] {

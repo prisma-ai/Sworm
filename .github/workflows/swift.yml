@@ -9,12 +9,12 @@ on:
 jobs:
   build:
 
-    runs-on: macos-11
+    runs-on: macos-12
 
     steps:
     - uses: actions/checkout@v2
     - uses: maxim-lobanov/setup-xcode@v1.3.0
       with:
-        xcode-version: '13.2'
-    - name: Test 15
-      run: xcodebuild -scheme Sworm-Package -destination 'platform=iOS Simulator,name=iPhone 13,OS=15.2' clean test
+        xcode-version: '14.0'
+    - name: Test 16
+      run: xcodebuild -scheme Sworm-Package -destination 'platform=iOS Simulator,name=iPhone 13,OS=16.0' clean test
